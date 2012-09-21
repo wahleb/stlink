@@ -85,6 +85,7 @@ extern "C" {
 #define STM32VL_CORE_ID 0x1ba01477
 #define STM32L_CORE_ID 0x2ba01477
 #define STM32F4_CORE_ID 0x2ba01477
+#define STM32F3_CORE_ID 0x2ba01477
 #define CORE_M3_R1 0x1BA00477
 #define CORE_M3_R2 0x4BA00477
 #define CORE_M4_R0 0x2BA01477
@@ -104,6 +105,7 @@ extern "C" {
 #define STM32_CHIPID_F1_VL_MEDIUM 0x420
 #define STM32_CHIPID_F1_VL_HIGH 0x428
 #define STM32_CHIPID_F1_XL 0x430
+#define STM32_CHIPID_F3 0x422
 
 // Constant STM32 memory map figures
 #define STM32_FLASH_BASE 0x08000000
@@ -223,6 +225,16 @@ extern "C" {
                     .sram_size = 0x18000,
                     .bootrom_base = 0x1fffe000,
                     .bootrom_size = 0x1800
+        },
+		{
+            //from rm0361
+            .chip_id = 0x422,
+                    .description = "STM32F3",
+                    .flash_size_reg = 0x1ffff7cc,	// "Flash size data register" (pg960)
+                    .flash_pagesize = 0x800,		// Page sizes listed in Table 5 (pg48)
+                    .sram_size = 0x10000,		// "SRAM" byte size in hex from Table 2 (pg43)
+                    .bootrom_base = 0x1fffd800,		// "System memory" starting address from Table 2 (pg43)
+                    .bootrom_size = 0x2000 		// "System memory" byte size in hex from Table 2 (pg43)
         },
         {
             //Use this as an example for mapping future chips:

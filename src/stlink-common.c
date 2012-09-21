@@ -1098,7 +1098,7 @@ int stlink_erase_flash_page(stlink_t *sl, stm32_addr_t flashaddr)
         | (1 << 0) | (1 << 1) | (1 << 2);
     stlink_write_debug32(sl, STM32L_FLASH_PECR, val);
   }
-  else if (sl->core_id == STM32VL_CORE_ID)
+  else if ((sl->core_id == STM32VL_CORE_ID) || (sl->core_id == STM32F3_CORE_ID))
   {
     /* wait for ongoing op to finish */
     wait_flash_busy(sl);
@@ -1261,7 +1261,7 @@ int write_loader_to_sram(stlink_t *sl, stm32_addr_t* addr, size_t* size) {
       loader_code = loader_code_stm32l;
       loader_size = sizeof(loader_code_stm32l);
     }
-    else if (sl->core_id == STM32VL_CORE_ID)
+    else if ((sl->core_id == STM32VL_CORE_ID) || (sl->core_id == STM32F3_CORE_ID))
     {
       loader_code = loader_code_stm32vl;
       loader_size = sizeof(loader_code_stm32vl);
@@ -1605,8 +1605,8 @@ int stlink_write_flash(stlink_t *sl, stm32_addr_t addr, uint8_t* base, unsigned 
     	val = stlink_read_debug32(sl, STM32L_FLASH_PECR)
              | (1 << 0) | (1 << 1) | (1 << 2);
     	stlink_write_debug32(sl, STM32L_FLASH_PECR, val);
-    } else if (sl->core_id == STM32VL_CORE_ID) {
-        ILOG("Starting Flash write for VL core id\n");
+    } else if ((sl->core_id == STM32VL_CORE_ID) || (sl->core_id == STM32F3_CORE_ID)) {
+        ILOG("Starting Flash write\n");
         /* flash loader initialization */
         if (init_flash_loader(sl, &fl) == -1) {
             WLOG("init_flash_loader() == -1\n");
@@ -1704,7 +1704,7 @@ int run_flash_loader(stlink_t *sl, flash_loader_t* fl, stm32_addr_t target, cons
       stlink_write_reg(sl, count, 2); /* count (32 bits words) */
       stlink_write_reg(sl, fl->loader_addr, 15); /* pc register */
 
-    } else if (sl->core_id == STM32VL_CORE_ID) {
+    } else if ((sl->core_id == STM32VL_CORE_ID)||(sl->core_id == STM32F3_CORE_ID)) {
 
       size_t count = size / sizeof(uint16_t);
       if (size % sizeof(uint16_t)) ++count;
@@ -1758,7 +1758,7 @@ int run_flash_loader(stlink_t *sl, flash_loader_t* fl, stm32_addr_t target, cons
         return -1;
       }
 
-    } else if (sl->core_id == STM32VL_CORE_ID) {
+    } else if ((sl->core_id == STM32VL_CORE_ID) || (sl->core_id == STM32F3_CORE_ID)) {
 
       stlink_read_reg(sl, 2, &rr);
       if (rr.r[2] != 0) {
